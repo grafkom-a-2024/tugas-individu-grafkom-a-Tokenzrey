@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="index.css" />
+		<title>Simple House Shape</title>
+	</head>
+	<body>
+		<digital-art>
+			<script type="buffer" name="position" data-size="2">
+				[
+				    -0.5, 0.0,
+				     0.5, 0.0,
+				     0.0, 0.5,
+				    -0.5, -0.5,
+				     0.5, -0.5,
+				     0.5, 0.0,
+				    -0.5, -0.5,
+				     0.5, 0.0,
+				    -0.5, 0.0
+				]
+			</script>
+			<script type="buffer" name="color" data-size="3">
+				[
+				    1.0, 0.0, 0.0,
+				    1.0, 0.0, 0.0,
+				    1.0, 0.0, 0.0,
+				    0.0, 0.0, 1.0,
+				    0.0, 0.0, 1.0,
+				    0.0, 0.0, 1.0,
+				    0.0, 0.0, 1.0,
+				    0.0, 0.0, 1.0,
+				    0.0, 0.0, 1.0
+				]
+			</script>
+			<script type="vert">
+				precision highp float;
+				uniform vec2 resolution;
+				attribute vec2 position;
+				attribute vec3 color;
+				varying vec3 vColor;
+				void main() {
+				    vColor = color;
+				    gl_Position = vec4(position, 0.0, 1.0);
+				}
+			</script>
+			<script type="frag">
+				precision highp float;
+				uniform vec2 resolution;
+				varying vec3 vColor;
+
+				void main() {
+					// Normalized coordinates: convert from screen space (0 to resolution) to normalized device coordinates (-1 to 1)
+					vec2 st = gl_FragCoord.xy / resolution.xy * 2.0 - 1.0;
+
+					// Adjust for aspect ratio
+					st.x *= resolution.x / resolution.y;
+
+					// Circle properties (light blue circle)
+					float radius = 0.1; // Radius of the circle
+					vec2 circleCenter = vec2(-0.30, -0.25); // Position of the circle's center
+					float circleDist = distance(st, circleCenter);
+					float smoothEdge = 0.01; // Width of the edge transition for anti-aliasing
+					float circleAlpha = smoothstep(radius, radius + smoothEdge, circleDist);
+
+					// Circle color
+					vec3 circleColor = vec3(0.5, 0.5, 1.0);
+
+					// Rectangle properties (door-like rectangle)
+					vec2 doorSize = vec2(0.2, 0.4); // Size of the door
+					vec2 doorCenter = vec2(0.35, -0.35); // Position of the door's center
+					vec2 doorDist = abs(st - doorCenter) - doorSize / 2.0;
+
+					// Calculate the alpha for the door with smooth edges
+					float doorAlpha = smoothstep(0.0, smoothEdge, max(doorDist.x, doorDist.y));
+
+					// Door color (brown)
+					vec3 doorColor = vec3(0.65, 0.33, 0.1);
+
+					// Combine the shapes with their respective colors
+					vec3 color = mix(circleColor, vColor, circleAlpha); // Blend circle
+					color = mix(doorColor, color, doorAlpha); // Blend door
+
+					gl_FragColor = vec4(color, 1.0);
+				}
+			</script>
+		</digital-art>
+		<script src="index.js"></script>
+	</body>
+</html>
