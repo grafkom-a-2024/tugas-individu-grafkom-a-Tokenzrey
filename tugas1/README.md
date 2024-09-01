@@ -1,6 +1,6 @@
-# identitas
-Nama : Muhammad Syarif Hidayatullah
-NRP : 5025221052
+# Identitas
+**Name:** Muhammad Syarif Hidayatullah  
+**NRP:** 5025221052
 # Penjelasan
 Implementasi dasar / basic dari `webgl` dalam bentuk 2D
 
