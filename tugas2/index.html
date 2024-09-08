@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="index.css" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<title>Simple House Shape</title>
+	</head>
+	<body class="relative block box-border min-h-screen">
+		<main class="relative flex justify-between w-full min-h-screen">
+			<digital-art class="w-full min-h-screen">
+				<script type="buffer" name="position" data-size="2">
+					[
+					    -0.5, 0.0,
+					     0.5, 0.0,
+					     0.0, 0.5,
+					    -0.5, -0.5,
+					     0.5, -0.5,
+					     0.5, 0.0,
+					    -0.5, -0.5,
+					     0.5, 0.0,
+					    -0.5, 0.0
+					]
+				</script>
+				<script type="buffer" name="color" data-size="3">
+					[
+					    1.0, 0.0, 0.0,
+					    1.0, 0.0, 0.0,
+					    1.0, 0.0, 0.0,
+					    0.0, 0.0, 1.0,
+					    0.0, 0.0, 1.0,
+					    0.0, 0.0, 1.0,
+					    0.0, 0.0, 1.0,
+					    0.0, 0.0, 1.0,
+					    0.0, 0.0, 1.0
+					]
+				</script>
+				<script type="vert">
+					precision highp float;
+					attribute vec4 position;
+					uniform vec2 uTranslation;
+					uniform float uRotation;
+					uniform vec2 uScale;
+					varying vec4 vColor;
+					attribute vec3 color;
+
+					void main() {
+					    vec2 scaledPosition = position.xy * uScale;
+					    float cosAngle = cos(uRotation);
+					    float sinAngle = sin(uRotation);
+					    vec2 rotatedPosition = vec2(
+					        cosAngle * scaledPosition.x - sinAngle * scaledPosition.y,
+					        sinAngle * scaledPosition.x + cosAngle * scaledPosition.y
+					    );
+					    vec2 translatedPosition = rotatedPosition + uTranslation;
+					    gl_Position = vec4(translatedPosition, position.z, position.w);
+
+					    vec3 color1 = vec3(1.0, 0.0, 0.0);
+					    vec3 color2 = vec3(0.0, 1.0, 0.0);
+					    vColor = vec4(mix(color1, color2, color), 1.0);
+					}
+				</script>
+				<script type="frag">
+					precision highp float;
+					uniform vec2 resolution;
+					uniform vec2 uTranslation; // Tambahkan parameter untuk transformasi
+					uniform float uRotation;
+					uniform vec2 uScale;
+
+					varying vec4 vColor;
+
+					void main() {
+					    vec2 st = gl_FragCoord.xy / resolution.xy * 2.0 - 1.0;
+					    st.x *= resolution.x / resolution.y;
+
+					    // Pusat circle dan door dengan transformasi
+					    vec2 scaledCircleCenter = (vec2(-0.30, -0.25) * uScale);
+					    vec2 rotatedCircleCenter = vec2(
+					        cos(uRotation) * scaledCircleCenter.x - sin(uRotation) * scaledCircleCenter.y,
+					        sin(uRotation) * scaledCircleCenter.x + cos(uRotation) * scaledCircleCenter.y
+					    );
+					    vec2 transformedCircleCenter = rotatedCircleCenter + uTranslation;
+
+					    float radius = 0.1;
+					    float circleDist = distance(st, transformedCircleCenter);
+					    float smoothEdge = 0.01;
+					    float circleAlpha = smoothstep(radius, radius + smoothEdge, circleDist);
+
+					    // Transformasi untuk door
+					    vec2 scaledDoorCenter = (vec2(0.35, -0.35) * uScale);
+					    vec2 rotatedDoorCenter = vec2(
+					        cos(uRotation) * scaledDoorCenter.x - sin(uRotation) * scaledDoorCenter.y,
+					        sin(uRotation) * scaledDoorCenter.x + cos(uRotation) * scaledDoorCenter.y
+					    );
+					    vec2 transformedDoorCenter = rotatedDoorCenter + uTranslation;
+
+					    vec2 doorSize = vec2(0.2, 0.4);
+					    vec2 doorDist = abs(st - transformedDoorCenter) - doorSize / 2.0;
+					    float doorAlpha = smoothstep(0.0, smoothEdge, max(doorDist.x, doorDist.y));
+
+					    // Warna shape
+					    vec3 circleColor = vec3(0.5, 0.5, 1.0);
+					    vec3 doorColor = vec3(0.65, 0.33, 0.1);
+					    vec3 color = mix(circleColor, vColor.rgb, circleAlpha);
+					    color = mix(doorColor, color, doorAlpha);
+
+					    gl_FragColor = vec4(color, 1.0);
+					}
+				</script>
+			</digital-art>
+			<div
+				class="relative w-[40%] h-full flex flex-col justify-center min-h-screen gap-6 px-6">
+				<div class="relative top-0 left-0">
+					<h1>Translation X : <span id="translationXValue"></span>%</h1>
+					<h1>Translation Y : <span id="translationYValue"></span>%</h1>
+					<h1>Rotation : <span id="rotationValue"></span>deg</h1>
+					<h1>Scale X : <span id="scaleXValue"></span>X</h1>
+					<h1>Scale Y : <span id="scaleYValue"></span>X</h1>
+				</div>
+				<div class="flex flex-col w-full sliders gap-9">
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">TranslateX :</h1>
+						<input
+							type="range"
+							id="translationX"
+							value="50"
+							min="0"
+							max="100" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">TranslateY :</h1>
+						<input
+							type="range"
+							id="translationY"
+							value="50"
+							min="0"
+							max="100" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">Rotation :</h1>
+						<input type="range" id="rotation" value="0" min="0" max="180" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">ScaleX :</h1>
+						<input type="range" id="scaleX" value="50" min="0" max="100" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">ScaleY :</h1>
+						<input type="range" id="scaleY" value="50" min="0" max="100" />
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<script src="index.js"></script>
+		<script src="range.js"></script>
+	</body>
+</html>
