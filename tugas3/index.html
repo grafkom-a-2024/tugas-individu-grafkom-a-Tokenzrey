@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>WebGL Demo</title>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
+			integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+			crossorigin="anonymous"
+			defer></script>
+		<link rel="stylesheet" href="style.css" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<!-- <script src="controller.js" type="module"></script> -->
+		<script src="webgl-demo.js" type="module"></script>
+	</head>
+
+	<body class="flex flex-col gap-2 overflow-x-hidden">
+		<canvas
+			id="glcanvas"
+			width="640"
+			height="480"
+			class="w-screen min-h-screen block"></canvas>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 448 512"
+			id="crosshair"
+			class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 fill-red-700 hidden">
+			<path
+				d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" />
+		</svg>
+		<button popovertarget="the-popover" class="btn">Open Config</button>
+
+		<dialog id="the-popover" popover class="card">
+			<div
+				class="relative w-full h-full flex flex-col justify-center gap-4 p-6 bg-black rounded-lg">
+				<div class="relative top-0 left-0 text-white">
+					<h1>Translation X : <span id="translationValue"></span></h1>
+					<h1>Rotation : <span id="rotationValue"></span></h1>
+					<h1>Scale : <span id="scaleValue"></span>X</h1>
+				</div>
+				<div class="flex flex-col w-full sliders gap-1">
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">
+							TranslateX/Y/Z : ({ ctrl / shift } + Arrow Button )
+						</h1>
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">Toggle camera : (ctrl + m)</h1>
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">
+							Movement camera : WASD and (shift + w / s)
+						</h1>
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">Rotation Y:</h1>
+						<input type="range" id="rotationX" value="0" min="0" max="180" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">Rotation X:</h1>
+						<input type="range" id="rotationY" value="0" min="0" max="180" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">Rotation Z:</h1>
+						<input type="range" id="rotationZ" value="0" min="0" max="180" />
+					</div>
+					<div class="flex flex-col gap-2">
+						<h1 class="text-white">Scale :</h1>
+						<input type="range" id="scale" value="50" min="0" max="100" />
+					</div>
+				</div>
+			</div>
+		</dialog>
+	</body>
+</html>

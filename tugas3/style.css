@@ -1,0 +1,74 @@
+:root {
+  --color-prim: lch(50% 50% 192deg);
+  --color-bg: lch(from var(--color-prim) calc(l + 40) calc(c * 0.25) h); 
+  --color-sheet: lch(from var(--color-prim) 100% calc(c * 0.05) h); 
+  --color-fg: lch(from var(--color-prim) 5% c h); 
+  font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+}
+
+[popover], ::backdrop {
+  transition: 
+    display 400ms ease-in-out allow-discrete,
+    transform 288ms ease-in-out,
+    opacity 160ms ease-in-out;
+}
+
+[popover] {
+  position: fixed;
+  width: fit-content;
+  height: fit-content;
+  inset: 0px;
+  padding: 0.25em;
+  opacity: 0;
+  transform: perspective(800px) translateY(200px) scale(0.8)  rotate3d(1, 1, 0, 180deg);
+
+  &::backdrop {
+    opacity: 0;
+  }
+  
+  &:popover-open {
+    opacity: 1;
+    transform: translateY(0) scale(1) ;
+  }
+
+  @starting-style {
+    &:popover-open {
+      opacity: 0;
+      transform: perspective(800px) translateY(-80px) scale(2) rotate3d(2, 0, 8, 45deg);
+    }
+    
+    &:popover-open::backdrop {
+      opacity: 0;
+    }
+  }
+}
+
+.card {
+  border-radius: 1rem;
+  box-shadow:  4px 4px 8px lch(from var(--color-bg) calc(l - 90) c h / 20%);
+  margin: 5% 5% auto auto;
+}
+
+.btn {
+  border: 0.25rem solid var(--color-fg);
+  border-radius: 1rem 0 0 1rem;
+  width: 130px;
+  font-size: 1rem;
+  padding: 0.33rem 0.75rem;
+  box-shadow:  2px 4px 0 var(--color-fg),
+    2px 6px 8px lch(from var(--color-bg) calc(l - 90) c h / 50%);
+  background-color: var(--color-sheet);
+  transition: 200ms ease-in-out;
+  cursor: pointer;
+  color: var(--color-fg);
+  position: absolute;
+  right: 0;
+  top: 30%;
+
+  &:focus,
+  &:hover {
+    background-color: white;
+    box-shadow:  0px 0px 0 black;
+    transform: translate(4px, 4px);
+  }
+}
